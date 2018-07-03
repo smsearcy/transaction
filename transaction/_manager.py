@@ -136,7 +136,9 @@ class TransactionManager(object):
         return self.get().abort()
 
     def __exit__(self, t, v, tb):
-        if v is None:
+        if self._txn is None:
+             return
+        elif v is None:
             self.commit()
         else:
             self.abort()

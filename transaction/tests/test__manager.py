@@ -746,6 +746,21 @@ class AttemptTests(unittest.TestCase):
         tm.savepoint()
         tm.commit()
 
+        # Aborting or committing within the context manager is allowed...
+        with tm:
+            tm.abort()
+        with tm:
+            tm.commit()
+        # But don't do anything with the transaction afterward
+        with self.assertRaises(NoTransaction):
+            with tm:
+                tm.abort()
+                tm.get()
+        with self.assertRaises(NoTransaction):
+            with tm:
+                tm.commit()
+                tm.get()
+
 
 
 class DummyManager(object):
